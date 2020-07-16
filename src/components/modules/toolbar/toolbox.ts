@@ -1,11 +1,11 @@
-import Module from '../../__module';
-import $ from '../../dom';
-import * as _ from '../../utils';
-import { BlockToolConstructable } from '../../../../types';
-import Flipper from '../../flipper';
-import { BlockToolAPI } from '../../block';
-import I18n from '../../i18n';
-import { I18nInternalNS } from '../../i18n/namespace-internal';
+import Module from "../../__module";
+import $ from "../../dom";
+import * as _ from "../../utils";
+import { BlockToolConstructable } from "../../../../types";
+import Flipper from "../../flipper";
+import { BlockToolAPI } from "../../block";
+import I18n from "../../i18n";
+import { I18nInternalNS } from "../../i18n/namespace-internal";
 
 /**
  * @class Toolbox
@@ -23,16 +23,18 @@ export default class Toolbox extends Module {
    *
    * @returns {object.<string, string>}
    */
-  public get CSS(): {[name: string]: string} {
+  public get CSS(): { [name: string]: string } {
     return {
-      toolbox: 'ce-toolbox',
-      toolboxButton: 'ce-toolbox__button',
-      toolboxButtonActive: 'ce-toolbox__button--active',
-      toolboxOpened: 'ce-toolbox--opened',
-      openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
+      toolbox: "ce-toolbox",
+      toolboxButton: "ce-toolbox__button",
+      toolboxButtonIcon: "ce-toolbox__button-icon",
+      toolboxButtonTitle: "ce-toolbox__button-title",
+      toolboxButtonActive: "ce-toolbox__button--active",
+      toolboxOpened: "ce-toolbox--opened",
+      openedToolbarHolderModifier: "codex-editor--toolbox-opened",
 
-      buttonTooltip: 'ce-toolbox-button-tooltip',
-      buttonShortcut: 'ce-toolbox-button-tooltip__shortcut',
+      buttonTooltip: "ce-toolbox-button-tooltip",
+      buttonShortcut: "ce-toolbox-button-tooltip__shortcut",
     };
   }
 
@@ -81,8 +83,18 @@ export default class Toolbox extends Module {
    * Makes the Toolbox
    */
   public make(): void {
-    this.nodes.toolbox = $.make('div', this.CSS.toolbox);
+    this.nodes.toolbox = $.make("div", this.CSS.toolbox);
     $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
+
+    this.Editor.Listeners.on(
+      this.Editor.Toolbar.nodes.select,
+      "change",
+      (event: ProgressEvent<HTMLSelectElement>) => {
+        const { value } = event.target;
+
+        this.toolButtonActivate(event, value);
+      }
+    );
 
     this.addTools();
     this.enableFlipper();
@@ -94,8 +106,13 @@ export default class Toolbox extends Module {
    * @param {MouseEvent|KeyboardEvent} event - event that activates toolbox button
    * @param {string} toolName - button to activate
    */
-  public toolButtonActivate(event: MouseEvent|KeyboardEvent, toolName: string): void {
-    const tool = this.Editor.Tools.toolsClasses[toolName] as BlockToolConstructable;
+  public toolButtonActivate(
+    event: MouseEvent | KeyboardEvent | ProgressEvent<HTMLSelectElement>,
+    toolName: string
+  ): void {
+    const tool = this.Editor.Tools.toolsClasses[
+      toolName
+    ] as BlockToolConstructable;
 
     this.insertNewBlock(tool, toolName);
   }
@@ -108,7 +125,9 @@ export default class Toolbox extends Module {
       return;
     }
 
-    this.Editor.UI.nodes.wrapper.classList.add(this.CSS.openedToolbarHolderModifier);
+    this.Editor.UI.nodes.wrapper.classList.add(
+      this.CSS.openedToolbarHolderModifier
+    );
     this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
 
     this.opened = true;
@@ -120,7 +139,9 @@ export default class Toolbox extends Module {
    */
   public close(): void {
     this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
-    this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
+    this.Editor.UI.nodes.wrapper.classList.remove(
+      this.CSS.openedToolbarHolderModifier
+    );
 
     this.opened = false;
     this.flipper.deactivate();
@@ -170,7 +191,7 @@ export default class Toolbox extends Module {
     }
 
     if (toolToolboxSettings && !toolToolboxSettings.icon) {
-      _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
+      _.log("Toolbar icon is missed. Tool %o skipped", "warn", toolName);
 
       return;
     }
@@ -183,76 +204,63 @@ export default class Toolbox extends Module {
     //   return;
     // }
 
-    const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX] || {};
+    const userToolboxSettings =
+      this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX] || {};
 
-    const button = $.make('li', [ this.CSS.toolboxButton ]);
+    const button = $.make("li", [this.CSS.toolboxButton]);
+    const Icon = $.make("span", [this.CSS.toolboxButtonIcon]);
+    const Title = $.make("span", [this.CSS.toolboxButtonTitle]);
 
     button.dataset.tool = toolName;
-    button.innerHTML = userToolboxSettings.icon || toolToolboxSettings.icon;
+
+    Icon.innerHTML = userToolboxSettings.icon || toolToolboxSettings.icon;
+    Title.innerHTML = toolToolboxSettings.title;
+    button.appendChild(Icon);
+    button.appendChild(Title);
 
     $.append(this.nodes.toolbox, button);
 
     this.nodes.toolbox.appendChild(button);
     this.nodes.buttons.push(button);
 
+    const select = this.Editor.Toolbar.nodes.select;
+    const option = $.make("option", []);
+
+    option.innerHTML = toolToolboxSettings.title;
+    (option as HTMLSelectElement).value = toolName;
+
+    $.append(select, option);
+
     /**
      * Add click listener
      */
-    this.Editor.Listeners.on(button, 'click', (event: KeyboardEvent|MouseEvent) => {
-      this.toolButtonActivate(event, toolName);
-    });
-
-    /**
-     * Add listeners to show/hide toolbox tooltip
-     */
-    const tooltipContent = this.drawTooltip(toolName);
-
-    this.Editor.Tooltip.onHover(button, tooltipContent, {
-      placement: 'bottom',
-      hidingDelay: 200,
-    });
+    this.Editor.Listeners.on(
+      button,
+      "click",
+      (event: KeyboardEvent | MouseEvent) => {
+        console.log(toolName);
+        this.toolButtonActivate(event, toolName);
+      }
+    );
 
     /**
      * Enable shortcut
      */
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
-    if (toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT]) {
-      this.enableShortcut(tool, toolName, toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT]);
+    if (
+      toolSettings &&
+      toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT]
+    ) {
+      this.enableShortcut(
+        tool,
+        toolName,
+        toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT]
+      );
     }
 
     /** Increment Tools count */
     this.displayedToolsCount++;
-  }
-
-  /**
-   * Draw tooltip for toolbox tools
-   *
-   * @param {string} toolName - toolbox tool name
-   * @returns {HTMLElement}
-   */
-  private drawTooltip(toolName: string): HTMLElement {
-    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
-    const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
-    const userToolboxSettings = toolSettings.toolbox || {};
-    const name = I18n.t(I18nInternalNS.toolNames, userToolboxSettings.title || toolboxSettings.title || toolName);
-
-    let shortcut = toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT];
-
-    const tooltip = $.make('div', this.CSS.buttonTooltip);
-    const hint = document.createTextNode(_.capitalize(name));
-
-    tooltip.appendChild(hint);
-
-    if (shortcut) {
-      shortcut = _.beautifyShortcut(shortcut);
-
-      tooltip.appendChild($.make('div', this.CSS.buttonShortcut, {
-        textContent: shortcut,
-      }));
-    }
-
-    return tooltip;
   }
 
   /**
@@ -262,7 +270,11 @@ export default class Toolbox extends Module {
    * @param {string} toolName - Tool name
    * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
-  private enableShortcut(tool: BlockToolConstructable, toolName: string, shortcut: string): void {
+  private enableShortcut(
+    tool: BlockToolConstructable,
+    toolName: string,
+    shortcut: string
+  ): void {
     this.Editor.Shortcuts.add({
       name: shortcut,
       handler: (event: KeyboardEvent) => {
