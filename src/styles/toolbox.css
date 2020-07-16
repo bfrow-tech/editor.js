@@ -1,13 +1,20 @@
 .ce-toolbox {
+  width: 120px;
+  padding: 10px 0;
   position: absolute;
   visibility: hidden;
   transition: opacity 100ms ease;
   will-change: opacity;
-  display: flex;
-  flex-direction: row;
+  border: 1px solid var(--color-silver);
+  box-shadow: 30px 0px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  background-color: var(--color-white);
 
-  @media (--mobile){
+  @media (--mobile) {
     position: static;
+    display: flex;
+    width: auto;
+    padding: 0;
     transform: none !important;
     align-items: center;
     overflow-x: auto;
@@ -16,11 +23,46 @@
   &--opened {
     opacity: 1;
     visibility: visible;
+
+    @media (--mobile) {
+      border-left-width: 0;
+      border-radius: 0 3px 3px 0;
+      margin-left: -2px;
+    }
   }
 
   &__button {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
     @apply --toolbox-button;
-    flex-shrink: 0;
+
+    @media (--mobile) {
+      padding-left: 0;
+      height: 100%;
+    }
+
+    &:hover,
+    &--active {
+      background-color: var(--color-mercury);
+    }
+  }
+
+  &__button-icon {
+    display: flex;
+    align-items: center;
+    justify-content:  center;
+    width: var(--toolbox-buttons-size);
+    height: var(--toolbox-buttons-size);
+  }
+
+  &__button-title {
+    font-size: 1.2rem;
+    color: var(--color-black);
+
+    @media (--mobile) {
+      display: none;
+    }
   }
 }
 
