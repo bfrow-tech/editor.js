@@ -1,8 +1,8 @@
-import Module from '../../__module';
-import $ from '../../dom';
-import * as _ from '../../utils';
-import I18n from '../../i18n';
-import { I18nInternalNS } from '../../i18n/namespace-internal';
+import Module from "../../__module";
+import $ from "../../dom";
+import * as _ from "../../utils";
+import I18n from "../../i18n";
+import { I18nInternalNS } from "../../i18n/namespace-internal";
 
 /**
  *
@@ -60,7 +60,7 @@ export default class Toolbar extends Module {
   /**
    * HTML Elements used for Toolbar UI
    */
-  public nodes: {[key: string]: HTMLElement} = {
+  public nodes: { [key: string]: HTMLElement } = {
     wrapper: null,
     content: null,
     actions: null,
@@ -78,23 +78,25 @@ export default class Toolbar extends Module {
    *
    * @returns {object}
    */
-  public get CSS(): {[name: string]: string} {
+  public get CSS(): { [name: string]: string } {
     return {
-      toolbar: 'ce-toolbar',
-      content: 'ce-toolbar__content',
-      actions: 'ce-toolbar__actions',
-      actionsOpened: 'ce-toolbar__actions--opened',
+      toolbar: "ce-toolbar",
+      content: "ce-toolbar__content",
+      actions: "ce-toolbar__actions",
+      actionsOpened: "ce-toolbar__actions--opened",
 
-      toolbarOpened: 'ce-toolbar--opened',
+      toolbarOpened: "ce-toolbar--opened",
 
       // Content Zone
-      plusButton: 'ce-toolbar__plus',
-      plusButtonShortcut: 'ce-toolbar__plus-shortcut',
-      plusButtonHidden: 'ce-toolbar__plus--hidden',
+      plusButton: "ce-toolbar__plus",
+      plusButtonHidden: "ce-toolbar__plus--hidden",
+
+      // Mobile tools items
+      plusSelect: "ce-toolbar__plus-select",
 
       // Actions Zone
-      blockActionsButtons: 'ce-toolbar__actions-buttons',
-      settingsToggler: 'ce-toolbar__settings-btn',
+      blockActionsButtons: "ce-toolbar__actions-buttons",
+      settingsToggler: "ce-toolbar__settings-btn",
     };
   }
 
@@ -102,13 +104,15 @@ export default class Toolbar extends Module {
    * Makes toolbar
    */
   public make(): void {
-    this.nodes.wrapper = $.make('div', this.CSS.toolbar);
+    const { isMobile } = this.Editor.UI;
+
+    this.nodes.wrapper = $.make("div", this.CSS.toolbar);
 
     /**
      * Make Content Zone and Actions Zone
      */
-    ['content', 'actions'].forEach((el) => {
-      this.nodes[el] = $.make('div', this.CSS[el]);
+    ["content", "actions"].forEach((el) => {
+      this.nodes[el] = $.make("div", this.CSS[el]);
     });
 
     /**
@@ -122,23 +126,19 @@ export default class Toolbar extends Module {
      *  - Plus Button
      *  - Toolbox
      */
-    this.nodes.plusButton = $.make('div', this.CSS.plusButton);
-    $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
+    this.nodes.plusButton = $.make("div", this.CSS.plusButton);
+    this.nodes.select = $.make("select", this.CSS.plusSelect);
+
+    $.append(this.nodes.plusButton, $.svg("plus", 16, 16));
     $.append(this.nodes.content, this.nodes.plusButton);
+    $.append(this.nodes.content, this.nodes.select);
 
-    this.Editor.Listeners.on(this.nodes.plusButton, 'click', () => this.plusButtonClicked(), false);
-
-    /**
-     * Add events to show/hide tooltip for plus button
-     */
-    const tooltipContent = $.make('div');
-
-    tooltipContent.appendChild(document.createTextNode(I18n.ui(I18nInternalNS.ui.toolbar.toolbox, 'Add')));
-    tooltipContent.appendChild($.make('div', this.CSS.plusButtonShortcut, {
-      textContent: '⇥ Tab',
-    }));
-
-    this.Editor.Tooltip.onHover(this.nodes.plusButton, tooltipContent);
+    this.Editor.Listeners.on(
+      this.nodes.plusButton,
+      "click",
+      () => this.plusButtonClicked(),
+      false
+    );
 
     /**
      * Make a Toolbox
@@ -151,21 +151,16 @@ export default class Toolbar extends Module {
      *  - Remove Block Button
      *  - Settings Panel
      */
-    this.nodes.blockActionsButtons = $.make('div', this.CSS.blockActionsButtons);
-    this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler);
-    const settingsIcon = $.svg('dots', 8, 8);
+    this.nodes.blockActionsButtons = $.make(
+      "div",
+      this.CSS.blockActionsButtons
+    );
+    this.nodes.settingsToggler = $.make("span", this.CSS.settingsToggler);
+    const settingsIcon = $.svg("dots", 24, 6);
 
     $.append(this.nodes.settingsToggler, settingsIcon);
     $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
     $.append(this.nodes.actions, this.nodes.blockActionsButtons);
-
-    this.Editor.Tooltip.onHover(
-      this.nodes.settingsToggler,
-      I18n.ui(I18nInternalNS.ui.blockTunes.toggler, 'Click to tune'),
-      {
-        placement: 'top',
-      }
-    );
 
     /**
      * Make and append Settings Panel
@@ -213,11 +208,19 @@ export default class Toolbar extends Module {
      * 1) On desktop — Toolbar at the top of Block, Plus/Toolbox moved the center of Block
      * 2) On mobile — Toolbar at the bottom of Block
      */
+
     if (!isMobile) {
       const contentOffset = Math.floor(blockHeight / 2);
+      const contentBlock = currentBlock.firstElementChild;
+      const plusOffset = Math.floor(
+        Math.floor((currentBlock.clientWidth - contentBlock.clientWidth) / 2)
+      );
+      const toolboxOffset = 20;
 
-      this.nodes.plusButton.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
-      this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
+      this.nodes.plusButton.style.transform = `translate3d(-${plusOffset}px, calc(${contentOffset}px - 50%), 0)`;
+      this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(-${
+        plusOffset + toolboxOffset
+      }px, 45px, 0)`;
     } else {
       toolbarY += blockHeight;
     }
@@ -225,7 +228,9 @@ export default class Toolbar extends Module {
     /**
      * Move Toolbar to the Top coordinate of Block
      */
-    this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(toolbarY)}px, 0)`;
+    this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(
+      toolbarY
+    )}px, 0)`;
   }
 
   /**
@@ -277,9 +282,10 @@ export default class Toolbar extends Module {
    *
    * @returns {{hide: function(): void, show: function(): void}}
    */
-  public get plusButton(): {hide: () => void; show: () => void} {
+  public get plusButton(): { hide: () => void; show: () => void } {
     return {
-      hide: (): void => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
+      hide: (): void =>
+        this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
       show: (): void => {
         if (this.Editor.Toolbox.isEmpty) {
           return;
@@ -294,7 +300,7 @@ export default class Toolbar extends Module {
    *
    * @returns {{hide: function(): void, show: function(): void}}
    */
-  private get blockActions(): {hide: () => void; show: () => void} {
+  private get blockActions(): { hide: () => void; show: () => void } {
     return {
       hide: (): void => {
         this.nodes.actions.classList.remove(this.CSS.actionsOpened);
@@ -320,7 +326,9 @@ export default class Toolbar extends Module {
     /**
      * Settings toggler
      */
-    this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', () => this.settingsTogglerClicked());
+    this.Editor.Listeners.on(this.nodes.settingsToggler, "click", () =>
+      this.settingsTogglerClicked()
+    );
   }
 
   /**

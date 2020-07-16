@@ -33,6 +33,12 @@
    */
   --color-gray-border: rgba(201, 201, 204, 0.48);
 
+  --color-white: #fff;
+  --color-silver: #C4C4C4;
+  --color-black: #000;
+  --color-mercury: #E5E5E5;
+  --color-gray: #898989;
+
   /**
    * Block content width
    * Should be set in a constant at the modules/ui.js
@@ -92,18 +98,9 @@
    * Styles for Toolbox Buttons and Plus Button
    */
   --toolbox-button: {
-    color: var(--grayText);
+    list-style: none;
+    color: var(--color-black);
     cursor: pointer;
-    width: var(--toolbox-buttons-size);
-    height: var(--toolbox-buttons-size);
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-
-    &:hover,
-    &--active {
-      color: var(--color-active-icon);
-    }
 
     &--active{
       animation: bounceIn 0.75s 1;
@@ -134,16 +131,15 @@
     margin: 0;
 
     &:hover {
-      background-color: var(--bg-light);
+      background-color: var(--color-mercury);
     }
 
     &--active {
-      color: var(--color-active-icon);
+      color: var(--color-mercury);
     }
 
     &--focused {
-      box-shadow: inset 0 0 0px 1px rgba(7, 161, 227, 0.08);
-      background: rgba(34, 186, 255, 0.08) !important;
+      background: var(--color-mercury);
 
       &-animated {
         animation-name: buttonClicked;

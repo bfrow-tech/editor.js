@@ -4,8 +4,6 @@
   }
 
   &--selected &__content {
-    background: var(--selectionColor);
-
     /**
      * Workaround Safari case when user can select inline-fragment with cross-block-selection
      */

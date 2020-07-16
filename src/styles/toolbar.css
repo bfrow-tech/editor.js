@@ -10,8 +10,6 @@
   display: none;
 
   @media (--mobile) {
-    @apply --overlay-pane;
-    padding: 3px;
     margin-top: 5px;
   }
 
@@ -31,17 +29,17 @@
     @media (--mobile){
       display: flex;
       align-content: center;
+      width: 100%;
+      max-width: initial;
       margin: 0;
-      max-width: calc(100% - 35px);
     }
   }
 
   &__plus {
     @apply --toolbox-button;
-
+    display: flex;
     position: absolute;
-    left: calc(var(--toolbox-buttons-size) * -1);
-    flex-shrink: 0;
+    background-color: var(--color-white);
 
     &-shortcut {
       opacity: 0.6;
@@ -53,17 +51,50 @@
       display: none;
     }
 
-    @media (--mobile){
-      display: inline-flex !important;
+    @media (--mobile) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: static;
       transform: none !important;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--color-silver);
+      box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
     }
   }
 
   &__plus,
   .ce-toolbox {
     top: 50%;
+  }
+
+  &__plus {
     transform: translateY(-50%);
+  }
+
+  &__plus-select {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 40px;
+    width: 40px;
+    opacity: .01;
+    -webkit-appearance: menulist-button;
+
+    @media (--mobile) {
+      display: block;
+    }
+  }
+
+  .ce-toolbox {
+    transform: translate3d(-70px, 40px, 0px);
+
+    @media (--mobile) {
+      transform: translate3d(0, 0, 0);
+    }
   }
 
   /**
@@ -73,14 +104,14 @@
   &__actions {
     position: absolute;
     right: -30px;
-    top: 5px;
+    top: 15px;
     opacity: 0;
 
     @media (--mobile){
       position: absolute;
-      right: -28px;
+      right: 0;
       top: 50%;
-      transform: translateY(-50%);
+      transform: translate(0, -50%);
       display: flex;
       align-items: center;
     }
@@ -98,18 +129,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
-    color: var(--grayText);
+    color: var(--color-black);
     cursor: pointer;
-    background: var(--bg-light);
 
-    &:hover {
-      color: var(--color-dark);
-    }
-
-    @media (--mobile){
-      background: transparent;
+    @media (--mobile) {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--color-silver);
+      background-color: var(--color-white);
+      box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
     }
   }
 }
