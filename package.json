@@ -1,6 +1,9 @@
 {
-  "name": "@editorjs/editorjs",
-  "version": "2.19.0",
+  "name": "@bfrow-tech/editorjs",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/bfrow-tech"
+  },
+  "version": "2.20.0",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -28,7 +31,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codex-team/editor.js.git"
+    "url": "git+https://github.com/bfrow-tech/editor.js.git"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
