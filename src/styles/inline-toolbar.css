@@ -41,7 +41,6 @@
 
   &__buttons {
     display: flex;
-    padding: 0 6px;
   }
 
   &__actions {
@@ -50,7 +49,7 @@
   &__dropdown {
     display: inline-flex;
     padding: 0 9px 0 10px;
-    margin: 0 6px 0 -6px;
+    margin-right: 6px;
     align-items: center;
     cursor: pointer;
     border-right: 1px solid var(--color-gray-border);
@@ -89,9 +88,6 @@
   @apply --toolbar-button;
   border-radius: 0;
   line-height: normal;
-  width: auto;
-  padding: 0 5px !important;
-  min-width: 24px;
 
   &:not(:last-of-type) {
     margin-right: 2px;
