@@ -5,6 +5,9 @@
 
   &--focused &__content {
     background: var(--color-gallery);
+  }
+
+  &--selected &__content {
     /**
      * Workaround Safari case when user can select inline-fragment with cross-block-selection
      */
