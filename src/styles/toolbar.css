@@ -24,7 +24,6 @@
   &__content {
     max-width: var(--content-width);
     margin: 0 auto;
-    position: relative;
 
     @media (--mobile){
       display: flex;
@@ -39,6 +38,8 @@
     @apply --toolbox-button;
     display: flex;
     position: absolute;
+    top: 11px;
+    left: 36px;
     background-color: var(--color-white);
 
     &-shortcut {
@@ -65,13 +66,8 @@
     }
   }
 
-  &__plus,
   .ce-toolbox {
     top: 50%;
-  }
-
-  &__plus {
-    transform: translateY(-50%);
   }
 
   &__plus-select {
@@ -103,7 +99,7 @@
    */
   &__actions {
     position: absolute;
-    right: -30px;
+    right: 29px;
     top: 15px;
     opacity: 0;
 

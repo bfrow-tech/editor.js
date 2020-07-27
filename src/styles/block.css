@@ -3,7 +3,8 @@
     margin-top: 0;
   }
 
-  &--selected &__content {
+  &--focused &__content {
+    background: var(--color-gallery);
     /**
      * Workaround Safari case when user can select inline-fragment with cross-block-selection
      */

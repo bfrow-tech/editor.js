@@ -1,5 +1,6 @@
-@custom-media --mobile (width <= 650px);
-@custom-media --not-mobile (width >= 651px);
+@custom-media --mobile (width <= 1023px);
+/* @custom-media --mobile (width <= 650px); */
+@custom-media --not-mobile (width >= 1023px);
 
 :root {
   /**
@@ -38,6 +39,7 @@
   --color-black: #000;
   --color-mercury: #E5E5E5;
   --color-gray: #898989;
+  --color-gallery: #F4F4F4;
 
   /**
    * Block content width

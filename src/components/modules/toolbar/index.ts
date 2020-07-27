@@ -210,16 +210,15 @@ export default class Toolbar extends Module {
      */
 
     if (!isMobile) {
-      const contentOffset = Math.floor(blockHeight / 2);
       const contentBlock = currentBlock.firstElementChild;
-      const plusOffset = Math.floor(
-        Math.floor((currentBlock.clientWidth - contentBlock.clientWidth) / 2)
-      );
-      const toolboxOffset = 20;
 
-      this.nodes.plusButton.style.transform = `translate3d(-${plusOffset}px, calc(${contentOffset}px - 50%), 0)`;
+      const actionOffset = Math.floor(
+        (currentBlock.clientWidth - contentBlock.clientWidth) / 2
+      );
+      const toolboxOffset = 50;
+
       this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(-${
-        plusOffset + toolboxOffset
+        actionOffset + toolboxOffset
       }px, 45px, 0)`;
     } else {
       toolbarY += blockHeight;
