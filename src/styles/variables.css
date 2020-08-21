@@ -25,9 +25,9 @@
   --color-dark: #1D202B;
 
   /**
-   * Blue icons
+   * Bazaar icons
    */
-  --color-active-icon: #388AE5;
+  --color-active-icon: #9b7b81;
 
   /**
    * Gray border, loaders
@@ -134,6 +134,7 @@
 
     &:hover {
       background-color: var(--color-mercury);
+      color: var(--color-active-icon);
     }
 
     &--active {
